@@ -1,0 +1,29 @@
+{
+  "name": "moneymate-be",
+  "version": "1.0.0",
+  "description": "MoneyMate the solution for financial matters",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "author": "Ahmad Yazid Munif",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.10.0",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.1.0",
+    "multer": "^2.0.1",
+    "nodemon": "^3.1.10",
+    "pg": "^8.16.3",
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
+  }
+}
