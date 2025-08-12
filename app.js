@@ -4,8 +4,8 @@ const express = require('express')
 const app = express()
 const http = require("http");
 const path = require('path');
-const { logger, logEvents } = require('./middleware/logger');
-const { successResponse, errorResponse } = require('./middleware/apiResponse');
+const { logger, logEvents } = require('./utils/logger');
+const { successResponse, errorResponse } = require('./middleware/responseHandler');
 const cookieParser = require('cookie-parser');
 const port = process.env.port || 5050;
 const cors = require('cors');
@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 //const {errorResponse} = require('./utils/responseHandler');
 
 // list all router
-// const authentication = require('./routes/authentication');
+// const authentication = require('./routes/authenticationRoute');
 // const userManagement = require('./routes/user_management');
 
 // app.use("/auth", authentication);
@@ -32,7 +32,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use((req, res,next) => {
   const err = new Error('Resource not found.');
   err.statusCode = 404;
-  err.name = 'NotFoundError';
   next(err);
 });
 app.use(errorResponse);
