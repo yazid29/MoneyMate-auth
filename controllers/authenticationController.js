@@ -10,7 +10,7 @@ exports.registerUser = async (req, res) => {
             let errMsg = result.message;
             console.log('Error Message !!',errMsg);
             // error(err, req, res, next)
-            return errorResponse(result,req,res);
+            return errorResponse(result,req,res, 400);
         }
         return successResponse(result.data, res, 201);
     } catch (error) {

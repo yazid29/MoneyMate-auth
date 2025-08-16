@@ -10,8 +10,10 @@ function success(data,res,statusCode, metadata = {}) {
 }
 
 // Middleware untuk respons error (dengan integrasi logging)
-function error(errorMessage, req, res) {
-    let statusCode = errorMessage.statusCode || 500;
+function error(errorMessage, req, res, code) {
+    console.log('errorMessage.statusCode',code);
+    
+    let statusCode = code!=null? code : 500;
     let customMessage = statusMsg[statusCode];
     let errors = errorMessage.message;
 
