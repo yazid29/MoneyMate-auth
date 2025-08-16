@@ -23,10 +23,10 @@ app.use(express.urlencoded({ extended: true }));
 //const {errorResponse} = require('./utils/responseHandler');
 
 // list all router
-// const authentication = require('./routes/authenticationRoute');
+const authentication = require('./routes/authenticationRoute');
 // const userManagement = require('./routes/user_management');
 
-// app.use("/auth", authentication);
+app.use("/auth", authentication);
 // app.use("/user/management", userManagement);
 // Middleware if route API not found
 app.use((req, res,next) => {
