@@ -12,8 +12,9 @@ exports.registerUser = async (req, res) => {
             // error(err, req, res, next)
             return errorResponse(result,req,res);
         }
-        return successResponse(result.data, res, 204);
+        return successResponse(result.data, res, 201);
     } catch (error) {
+        console.log('Error Message !!',error);
         return errorResponse(error,req,res);
     }
     

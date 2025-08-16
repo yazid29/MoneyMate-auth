@@ -12,9 +12,20 @@ class accountModel {
             }).returning(['id', 'email']);
             return {status: 1,data: userAccount};
         } catch (error) {
-            return {status: 0,message: error.message};
+            throw error;
         }
     }
+    checkExistingUser = async (username, email) => {
+        try {
+            const user = await pool('tb_users')
+                .where({ username: username })
+                .orWhere({ email: email })
+                .first();
+            return user;
+        } catch (error) {
+            throw error;
+        }
+    };
 }
 
 module.exports = new accountModel();

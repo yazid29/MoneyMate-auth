@@ -14,23 +14,38 @@ const generateToken = (data) => {
 
 exports.registerUser = async (data) => {
     try {
+        let usernameData = data.username;
+        let emailData = data.email;
+        const existingUser = await accountModel.checkExistingUser(usernameData, emailData);
+        
+        if (existingUser) {
+            if (existingUser.username === usernameData) {
+                return {
+                    status: 0,
+                    message: "Username already exists."
+                };
+            }
+            if (existingUser.email === emailData) {
+                return {
+                    status: 0,
+                    message: "Email already exists."
+                };
+            }
+        }
+
         const hashedPassword = await encryption.hashPassword(data.password);
         // const checkPassword = await encryption.checkPassword(data.password, hashedPassword);
-        let newAccount = {
-            username: data.username,
-            email: data.email,
+        const newAccount = {
+            username: usernameData,
+            email: emailData,
             password: hashedPassword,
             createdAt: new Date().toISOString(),
             // createdAt: Date.now()
         };
         const resultUser = await accountModel.insertData(newAccount);
-        if(resultUser.status == 0) throw new Error(resultUser.message);
         return resultUser;
     } catch (error) {
-        return {
-            status: 0,
-            message: error.message
-        };
+        throw error;
     }
 }
 
