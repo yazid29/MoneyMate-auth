@@ -12,25 +12,27 @@ exports.registerUser = async (req, res) => {
             // error(err, req, res, next)
             return errorResponse(result,req,res, 400);
         }
-        return successResponse(result.data, res, 201);
+        return successResponse(result.data, res, 201, "Registration successful!");
     } catch (error) {
         console.log('Error Message !!',error);
         return errorResponse(error,req,res);
     }
     
 }
-// exports.loginUser = async (req, res) => {    
-//     try {
-//         const body = req.body;
-//         const resultAccess = await authService.loginUser(body);
-//         if(!resultAccess){
-//             return errorResponse(res, 404, 'Username or Password is wrong');
-//         }
-//         return successResponse(res, 200, `Login Success`,resultAccess);
-//     } catch (error) {
-//         return errorResponse(res, 500, "Something went wrong", error.message);
-//     }
-// }
+exports.loginUser = async (req, res) => {    
+    try {
+        const body = req.body;
+        const resultAccess = await authService.loginUser(body);
+        if(!resultAccess){
+            return errorResponse('Username or Password is wrong',req,res, 404);
+            // return errorResponse(res, 404, 'Username or Password is wrong');
+        }
+        return successResponse(resultAccess, res, 200, "Login successful!");
+    } catch (error) {
+        console.log('Error Message !!',error);
+        return errorResponse(error,req,res);
+    }
+}
 // exports.logout = async (req,res) => {
 //     try {
 //         const token = req.headers['authorization'].split(' ')[1]; 

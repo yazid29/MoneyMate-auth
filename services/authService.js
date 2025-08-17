@@ -11,6 +11,10 @@ const generateToken = (data) => {
     const token = jwt.sign(data, process.env.SECRET_KEY, { expiresIn: "15m" });
     return token;
 }
+const generateRefreshToken = (data) => {
+    const token = jwt.sign(data, process.env.SECRET_KEY, { expiresIn: "7d" });
+    return token;
+}
 
 exports.registerUser = async (data) => {
     try {
@@ -44,6 +48,35 @@ exports.registerUser = async (data) => {
         };
         const resultUser = await accountModel.insertData(newAccount);
         return resultUser;
+    } catch (error) {
+        throw error;
+    }
+}
+exports.loginUser = async (data) => {
+    try {
+        let usernameData = data.username;
+        const resultUser = await accountModel.getUserByUsername(usernameData);
+        
+        if (resultUser) {
+            const checkPassword = await encryption.checkPassword(data.password, resultUser.password);
+            if (checkPassword) {
+                let dataUser = {
+                    username: resultUser.username,
+                    email: resultUser.email
+                }
+                let token = generateToken(dataUser);
+                let refreshToken = {
+                    refresh_token: generateRefreshToken(dataUser),
+                    updated_at: new Date()
+                };
+                const resultUpdate = await accountModel.updateByUsername(usernameData,refreshToken);
+                console.log("Update Successfuly",resultUpdate);
+                return {token: token};
+            } else {
+                return false;
+            }
+        }
+        return false;
     } catch (error) {
         throw error;
     }

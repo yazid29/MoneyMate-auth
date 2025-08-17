@@ -26,6 +26,26 @@ class accountModel {
             throw error;
         }
     };
+    getUserByUsername = async (username) => {
+        try {
+            const user = await pool('tb_users')
+                .where({ username: username })
+                .first();
+            return user;
+        } catch (error) {
+            throw error;
+        }
+    };
+    updateByUsername = async (username,updateData) => {
+        try {
+            const user = await pool('tb_users')
+                .where({ username: username })
+                .update(updateData);
+            return user;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 module.exports = new accountModel();
