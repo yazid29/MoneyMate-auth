@@ -45,7 +45,26 @@ class accountModel {
         } catch (error) {
             throw error;
         }
-    }
+    };
+    findRefreshToken = async (refreshToken) => {
+        try {
+            const foundToken = await pool('tb_users').where('refresh_token', refreshToken).first();
+            return foundToken;
+        } catch (error) {
+            throw error;
+        }
+    };
+    deleteRefreshToken = async (refreshToken) => {
+        try {
+            
+            await pool('tb_users')
+                .where('refresh_token', refreshToken)
+                .update({ refresh_token: null });
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    };
 }
 
 module.exports = new accountModel();

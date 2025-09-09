@@ -33,6 +33,24 @@ exports.loginUser = async (req, res) => {
         return errorResponse(error,req,res);
     }
 }
+exports.handleLogout = async (req, res) => {
+    const cookies = req.cookies;
+    if (!cookies?.jwt) {
+        console.log('Tidak ada cookie, pengguna sudah logout');
+        return res.sendStatus(204); 
+    }
+
+    const refreshToken = cookies.jwt;
+
+    try {
+        await authService.logoutUser(refreshToken);
+        res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
+        res.sendStatus(204);
+    } catch (error) {
+        console.error('Error in authController logout: ', error);
+        return errorResponse(error,req,res);
+    }
+};
 // exports.logout = async (req,res) => {
 //     try {
 //         const token = req.headers['authorization'].split(' ')[1]; 

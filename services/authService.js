@@ -67,7 +67,7 @@ exports.loginUser = async (data) => {
                 let getToken = generateToken(dataUser);
                 let getRefreshToken = generateRefreshToken(dataUser);
                 let refreshToken = {
-                    access_token: getToken,
+                    // access_token: getToken,
                     refresh_token: getRefreshToken,
                     updated_at: new Date()
                 };
@@ -86,7 +86,22 @@ exports.loginUser = async (data) => {
         throw error;
     }
 }
+exports.logoutUser = async (refreshToken) => {
+    try {
+        const foundToken = await accountModel.findRefreshToken(refreshToken);
 
+        if (foundToken) {
+            console.log('Logout Berhasil');
+            await accountModel.deleteRefreshToken(refreshToken);
+            return true;
+        }
+        
+        return false;
+    } catch (error) {
+        console.error('Error during logout service:', error);
+        throw error;
+    }
+};
 // exports.loginUser = async (data) => {
 //     try {
 //         const querySelect = {
