@@ -64,14 +64,19 @@ exports.loginUser = async (data) => {
                     username: resultUser.username,
                     email: resultUser.email
                 }
-                let token = generateToken(dataUser);
+                let getToken = generateToken(dataUser);
+                let getRefreshToken = generateRefreshToken(dataUser);
                 let refreshToken = {
-                    refresh_token: generateRefreshToken(dataUser),
+                    access_token: getToken,
+                    refresh_token: getRefreshToken,
                     updated_at: new Date()
                 };
                 const resultUpdate = await accountModel.updateByUsername(usernameData,refreshToken);
                 console.log("Update Successfuly",resultUpdate);
-                return {token: token};
+                return {
+                    accessToken: getToken,
+                    refreshToken:getRefreshToken
+                };
             } else {
                 return false;
             }
