@@ -1,6 +1,7 @@
 // const logger = require('../config/logger');
 // const UserAccount = require('../models/accountModel');
 const accountModel = require('../models/accountModel');
+const refreshTokenModel = require('../models/refreshTokenModel');
 const encryption = require('../utils/hashPassword');
 const jwt = require("jsonwebtoken");
 // const constant = require("../utils/constant");
@@ -67,12 +68,15 @@ exports.loginUser = async (data) => {
                 let getToken = generateToken(dataUser);
                 let getRefreshToken = generateRefreshToken(dataUser);
                 let refreshToken = {
-                    // access_token: getToken,
+                    access_token: getToken,
                     refresh_token: getRefreshToken,
-                    updated_at: new Date()
+                    created_at: new Date()
                 };
-                const resultUpdate = await accountModel.updateByUsername(usernameData,refreshToken);
-                console.log("Update Successfuly",resultUpdate);
+                // const resultUpdate = await accountModel.updateByUsername(usernameData,refreshToken);
+                await refreshTokenModel.deleteAllUserTokens(resultUser.id);
+                await refreshTokenModel.saveToken(resultUser.id, refreshToken);
+
+                console.log("Login Successfuly");
                 return {
                     accessToken: getToken,
                     refreshToken:getRefreshToken
@@ -88,14 +92,26 @@ exports.loginUser = async (data) => {
 }
 exports.logoutUser = async (refreshToken) => {
     try {
-        const foundToken = await accountModel.findRefreshToken(refreshToken);
+        // const foundToken = await accountModel.findRefreshToken(refreshToken);
 
-        if (foundToken) {
-            console.log('Logout Berhasil');
-            await accountModel.deleteRefreshToken(refreshToken);
-            return true;
+        // if (foundToken) {
+        //     console.log('Logout Berhasil');
+        //     await accountModel.deleteRefreshToken(refreshToken);
+        //     return true;
+        // }
+        const userId = await refreshTokenModel.findToken(refreshToken);
+        console.log('userId',userId);
+        if(userId){
+            const deletedRows = await refreshTokenModel.deleteAllUserTokens(userId.user_id);
+    
+            if (deletedRows > 0) {
+                console.log('Logout Berhasil');
+                return true;
+            } else {
+                console.log('Token tidak ditemukan, logout gagal atau sudah dilakukan sebelumnya.');
+                return false;
+            }
         }
-        
         return false;
     } catch (error) {
         console.error('Error during logout service:', error);

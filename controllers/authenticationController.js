@@ -35,6 +35,7 @@ exports.loginUser = async (req, res) => {
 }
 exports.handleLogout = async (req, res) => {
     const cookies = req.cookies;
+    // console.log('Cokies',cookies);
     if (!cookies?.jwt) {
         console.log('Tidak ada cookie, pengguna sudah logout');
         return res.sendStatus(204); 

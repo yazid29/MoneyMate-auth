@@ -16,13 +16,19 @@ function error(errorMessage, req, res, code) {
     
     let statusCode = code!=null? code : 500;
     let statusMessage = statusMsg[statusCode];
-    let errors = errorMessage.message;
+    let errors = errorMessage.message? errorMessage.message:errorMessage;
 
-    let errorMsg = `${req.method}\t${req.url}\t${errorMessage.statusCode}\t${errorMessage.message}`;
+    let errorMsg = `${req.method}\t${req.url}\t`;
+    if(errorMessage.message != undefined) {
+        errorMsg = errorMsg+`${errorMessage.statusCode}\t${errorMessage.message}`;
+    }else{
+        errorMsg = errorMsg+`${errorMessage}`;
+    }
     
-    logEvents(errorMsg, 'errLog.log');
     if (errorMessage.stack) {
         logEvents(`Stack: ${errorMessage.stack}`, 'errLog.log');
+    }else{
+        logEvents(errorMsg, 'errLog.log');
     }
 
     return res.status(statusCode).json({
