@@ -65,12 +65,14 @@ exports.loginUser = async (data) => {
                     username: resultUser.username,
                     email: resultUser.email
                 }
+                const expiresIn = 7 * 24 * 60 * 60 * 1000;
+                const expiresAt = new Date(Date.now() + expiresIn);
                 let getToken = generateToken(dataUser);
                 let getRefreshToken = generateRefreshToken(dataUser);
                 let refreshToken = {
-                    access_token: getToken,
                     refresh_token: getRefreshToken,
-                    created_at: new Date()
+                    created_at: new Date(),
+                    expires_at: expiresAt
                 };
                 // const resultUpdate = await accountModel.updateByUsername(usernameData,refreshToken);
                 await refreshTokenModel.deleteAllUserTokens(resultUser.id);
@@ -92,13 +94,6 @@ exports.loginUser = async (data) => {
 }
 exports.logoutUser = async (refreshToken) => {
     try {
-        // const foundToken = await accountModel.findRefreshToken(refreshToken);
-
-        // if (foundToken) {
-        //     console.log('Logout Berhasil');
-        //     await accountModel.deleteRefreshToken(refreshToken);
-        //     return true;
-        // }
         const userId = await refreshTokenModel.findToken(refreshToken);
         console.log('userId',userId);
         if(userId){
@@ -118,6 +113,38 @@ exports.logoutUser = async (refreshToken) => {
         throw error;
     }
 };
+exports.refreshToken = async (refreshToken) => {
+    try {
+        const foundToken = await refreshTokenModel.findToken(refreshToken);
+        
+        if (!foundToken || new Date() > new Date(foundToken.expires_at)) {
+            throw new Error('Please log in again.');
+        }
+
+        let dataUser = {
+            username: foundToken.username,
+            email: foundToken.email
+        }
+        const expiresIn = 7 * 24 * 60 * 60 * 1000;
+        const expiresAt = new Date(Date.now() + expiresIn);
+        let getToken = generateToken(dataUser);
+        let getRefreshToken = generateRefreshToken(dataUser);
+        let refreshToken = {
+            refresh_token: getRefreshToken,
+            created_at: new Date(),
+            expires_at: expiresAt
+        };
+        // const resultUpdate = await accountModel.updateByUsername(usernameData,refreshToken);
+        await refreshTokenModel.deleteAllUserTokens(resultUser.id);
+        await refreshTokenModel.saveToken(resultUser.id, refreshToken);
+        return {
+            accessToken: getToken,
+            refreshToken:getRefreshToken
+        };
+    } catch (error) {
+        throw error;
+    }
+}
 // exports.loginUser = async (data) => {
 //     try {
 //         const querySelect = {

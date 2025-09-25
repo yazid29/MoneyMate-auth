@@ -4,9 +4,9 @@ class refreshTokenModel {
     saveToken = async (userId, token) => {
         const saveTokenData = await pool('tb_refresh_tokens').insert({
             user_id: userId,
-            access_token: token.access_token,
             refresh_token: token.refresh_token,
-            created_at:token.created_at
+            created_at:token.created_at,
+            expires_at:token.expires_at
         }).returning(['id']);
         return saveTokenData;
         
